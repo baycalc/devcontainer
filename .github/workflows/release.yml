@@ -1,0 +1,27 @@
+name: Devcontainer
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: pre-build dev container image
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/blocknetwork-eu/devcontainer
+          cacheFrom: ghcr.io/blocknetwork-eu/devcontainer
+          push: always
